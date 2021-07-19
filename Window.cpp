@@ -32,9 +32,9 @@ bool Window::init()
 
 	wc.hInstance = NULL;	// A handle to the instance that contains the window procedure for the class
 
-	wc.lpszClassName = "MyWindowClass";	// A pointer to a null-terminated 256 character-max string specifying the class name
+	wc.lpszClassName = L"MyWindowClass";	// A pointer to a null-terminated 256 character-max string specifying the class name
 
-	wc.lpszMenuName = "";	// A pointer to a null-terminated character string specifying the resource name of the class menu
+	wc.lpszMenuName = L"";	// A pointer to a null-terminated character string specifying the resource name of the class menu
 
 	wc.style = NULL;	// The class style
 
@@ -43,7 +43,15 @@ bool Window::init()
 	// returns false if registration fails
 	if (!::RegisterClassExW(&wc)) { return false; }
 
-	::CreateWindowExW(WS_EX_OVERLAPPEDWINDOW, "MyWindowClass", "DirectX Application", WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, 1024, 768, NULL, NULL, NULL, NULL);
+	// Create the window
+	m_hwnd = ::CreateWindowExW(WS_EX_OVERLAPPEDWINDOW, L"MyWindowClass", L"DirectX Application", WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, 1024, 768, NULL, NULL, NULL, NULL);
+
+	// If window creation fails, return false
+	if (m_hwnd == NULL) { return false; }
+
+	// Show the window
+	::ShowWindow(m_hwnd, SW_SHOW);
+	::UpdateWindow(m_hwnd);
 
 	return true;
 }
