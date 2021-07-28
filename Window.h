@@ -23,7 +23,7 @@ public:
 	virtual void onDestroy();
 
 protected:
-	HWND m_hwnd;
+	HWND m_hwnd = nullptr;
 	bool m_is_run = false;
 
 private:

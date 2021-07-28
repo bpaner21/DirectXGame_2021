@@ -67,9 +67,9 @@ bool Window::init()
 
 	wc.hInstance = NULL;	// A handle to the instance that contains the window procedure for the class
 
-	wc.lpszClassName = L"MyWindowClass";	// A pointer to a null-terminated 256 character-max string specifying the class name
+	wc.lpszClassName = L"MyWindowClass";	// A pointer to a null-terminated 256 character-max string literal specifying the class name
 
-	wc.lpszMenuName = L"";	// A pointer to a null-terminated character string specifying the resource name of the class menu
+	wc.lpszMenuName = L"";	// A pointer to a null-terminated character string literal specifying the resource name of the class menu
 
 	wc.style = NULL;	// The class style
 
@@ -114,7 +114,7 @@ bool Window::broadcast()
 {
 	MSG msg;
 
-	while (::PeekMessageW(&msg, NULL, 0,0, PM_REMOVE) > 0)
+	while (::PeekMessageW(&msg, NULL, 0, 0, PM_REMOVE) > 0)
 	{
 		TranslateMessage(&msg);
 		DispatchMessageW(&msg);
