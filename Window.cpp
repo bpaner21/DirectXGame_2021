@@ -3,6 +3,8 @@
 
 #include "Window.h"
 
+Window* window = nullptr;
+
 Window::Window()
 {
 
@@ -11,6 +13,39 @@ Window::Window()
 Window::~Window()
 {
 
+}
+
+LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) 
+{
+	switch (msg)
+	{
+
+	case WM_CREATE:
+	{
+		// Event fired when the window will be created
+		window->onCreate();
+
+		break;
+	}
+
+	case WM_DESTROY:
+	{
+		// Event fired when the window will be destroyed
+		window->onDestroy();
+
+		::PostQuitMessage(0);
+
+		break;
+	}
+
+	default:
+	{
+		return ::DefWindowProc(hwnd, msg, wparam, lparam);
+	}
+
+	}
+
+	return NULL;
 }
 
 bool Window::init()
@@ -38,20 +73,25 @@ bool Window::init()
 
 	wc.style = NULL;	// The class style
 
+	wc.lpfnWndProc = &WndProc;	// A pointer to the window procedure. You must use the CallWindowProc function to call the window procedure
 
 	// Win32 function to register a class that defines the style and properties of the window to be created
 	// returns false if registration fails
 	if (!::RegisterClassExW(&wc)) { return false; }
 
-	// Create the window
+	if (window == nullptr) { window = this; }
+
+	// Create the window, or return false if it fails
 	m_hwnd = ::CreateWindowExW(WS_EX_OVERLAPPEDWINDOW, L"MyWindowClass", L"DirectX Application", WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, 1024, 768, NULL, NULL, NULL, NULL);
 
-	// If window creation fails, return false
 	if (m_hwnd == NULL) { return false; }
 
 	// Show the window
 	::ShowWindow(m_hwnd, SW_SHOW);
 	::UpdateWindow(m_hwnd);
+
+	// Indicate that window is intialized and running
+	m_is_run = true;
 
 	return true;
 }
@@ -59,6 +99,39 @@ bool Window::init()
 bool Window::release() 
 {
 
+	// Destroy the window
+	if (::DestroyWindow(m_hwnd) == false) { return false; }
+
 	return true;
+}
+
+bool Window::isRun()
+{
+	return m_is_run;
+}
+
+bool Window::broadcast()
+{
+	MSG msg;
+
+	while (::PeekMessageW(&msg, NULL, 0,0, PM_REMOVE) > 0)
+	{
+		TranslateMessage(&msg);
+		DispatchMessageW(&msg);
+	}
+
+	window->onUpdate();
+
+	Sleep(0);
+
+	return true;
+}
+
+void Window::onDestroy()
+{
+	// Indicate window is about to be destroyed
+	m_is_run = false;
+
+	return;
 }
 

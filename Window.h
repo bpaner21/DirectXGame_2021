@@ -13,8 +13,18 @@ public:
 	// Release Window
 	bool release();
 
+	bool isRun();
+
+	bool broadcast();
+
+	// EVENTS
+	virtual void onCreate() = 0;
+	virtual void onUpdate() = 0;
+	virtual void onDestroy();
+
 protected:
 	HWND m_hwnd;
+	bool m_is_run = false;
 
 private:
 };
